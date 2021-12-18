@@ -7,6 +7,8 @@ function App() {
   const [playerDeck, setPlayerDeck] = useState([])
   const [cpuWar, setCpuWar] = useState([])
   const [playerWar, setPlayerWar] = useState([])
+  const [drawnPlCard, setDrawnPlCard] = useState({})
+  const [drawnCpCard, setDrawnCpCard] = useState({})
   const [deckId, setDeckId] = useState('')
 
   useEffect(() => {
@@ -52,6 +54,9 @@ function App() {
       const playersCards = getCardValues(cards)
       setPlayerDeck(playersCards)
     })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 
     fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
     .then(function(response) {
@@ -62,14 +67,24 @@ function App() {
       const cpusCards = getCardValues(cards)
       setCpuDeck(cpusCards)
     })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
   }
 
   const drawCards = () => {
+
+    setDrawnPlCard({})
+    setDrawnCpCard({})
+
     const pDeck = playerDeck.slice()
     const cDeck = cpuDeck.slice()
 
     const drawnPlayerCard = pDeck[0]
     const drawnCpuCard = cDeck[0]
+
+    setDrawnPlCard(drawnPlayerCard)
+    setDrawnCpCard(drawnCpuCard)
 
     console.log(drawnPlayerCard)
     console.log(drawnCpuCard)
@@ -77,11 +92,15 @@ function App() {
     if (parseInt(drawnPlayerCard.value) > parseInt(drawnCpuCard.value)) {
       setPlayerDeck(pDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
       setCpuDeck(cDeck.slice(1))
+      setDrawnPlCard({})
+      setDrawnCpCard({})
     }
 
     else if (parseInt(drawnPlayerCard.value) < parseInt(drawnCpuCard.value)) {
       setCpuDeck(cDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
       setPlayerDeck(pDeck.slice(1))
+      setDrawnPlCard({})
+      setDrawnCpCard({})
     }
 
     else if (parseInt(drawnPlayerCard.value) === parseInt(drawnCpuCard.value)){
@@ -95,24 +114,25 @@ function App() {
     const cWarDeck = cpuWar.slice()
     const pWarDeck = playerWar.slice()
 
-    const drawnPlayerCard = pDeck[0]
-    const drawnCpuCard = cDeck[0]
-
     const pWar = pDeck.slice(1).slice(0,2)
     const cWar = cDeck.slice(1).slice(0,2)
 
     if (parseInt(pWar[pWar.length-1].value) > parseInt(cWar[cWar.length-1].value)) {
-      setPlayerDeck(pDeck.slice(3, pDeck.length).concat([drawnPlayerCard, drawnCpuCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
+      setPlayerDeck(pDeck.slice(3, pDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
       setCpuDeck(cDeck.slice(3, cDeck.length))
       setCpuWar([])
       setPlayerWar([])
+      setDrawnPlCard({})
+      setDrawnCpCard({})
     }
 
     else if (parseInt(pWar[pWar.length-1].value) < parseInt(cWar[cWar.length-1].value)) {
-      setCpuDeck(cDeck.slice(3, cDeck.length).concat([drawnPlayerCard, drawnCpuCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
+      setCpuDeck(cDeck.slice(3, cDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
       setPlayerDeck(pDeck.slice(3, pDeck.length))
       setCpuWar([])
       setPlayerWar([])
+      setDrawnPlCard({})
+      setDrawnCpCard({})
     }
 
     else if (parseInt(pWar[pWar.length-1].value) === parseInt(cWar[cWar.length-1].value)) {
