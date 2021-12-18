@@ -7,6 +7,20 @@ function App() {
   const [playerDeck, setPlayerDeck] = useState([])
   const [deckId, setDeckId] = useState('')
 
+  useEffect(() => {
+    fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
+    .then(function(response) {
+      return response.json()
+    })
+    .then(function(response){
+      console.log(response)
+      setDeckId(response.deck_id)
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }, [])
+
   const getCardValues = (deck) => {
     const newDeck = deck.map((card) => {
       if(card.value === "JACK") {
@@ -21,23 +35,8 @@ function App() {
         return {...card}
       }
     })
-
     return newDeck;
   }
-
-  useEffect(() => {
-    fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
-    .then(function(response) {
-      return response.json()
-    })
-    .then(function(response){
-      console.log(response)
-      setDeckId(response.deck_id)
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-  }, [])
 
   const startGame = () => {
     console.log(deckId)
@@ -73,11 +72,24 @@ function App() {
     console.log(drawnPlayerCard)
     console.log(drawnCpuCard)
 
-    const newPDeck = pDeck.slice(1)
-    const newCpuDeck = cDeck.slice(1)
+    if (drawnPlayerCard.value > drawnCpuCard.value) {
+     setPlayerDeck(pDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+     setCpuDeck(cDeck.slice(1))
+    }
 
-    setPlayerDeck(newPDeck)
-    setCpuDeck(newCpuDeck)
+    else if (drawnPlayerCard.value < drawnCpuCard.value) {
+      setCpuDeck(cDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+      setPlayerDeck(pDeck.slice(1))
+    }
+
+    else {
+       war()
+     }
+
+  }
+
+  const war = () => {
+    console.log('WAR!')
   }
 
   useEffect(() => {
