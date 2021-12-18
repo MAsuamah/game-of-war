@@ -5,6 +5,8 @@ function App() {
 
   const [cpuDeck, setCpuDeck] = useState([])
   const [playerDeck, setPlayerDeck] = useState([])
+  const [cpuWar, setCpuWar] = useState([])
+  const [playerWar, setPlayerWar] = useState([])
   const [deckId, setDeckId] = useState('')
 
   useEffect(() => {
@@ -72,24 +74,54 @@ function App() {
     console.log(drawnPlayerCard)
     console.log(drawnCpuCard)
 
-    if (drawnPlayerCard.value > drawnCpuCard.value) {
-     setPlayerDeck(pDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
-     setCpuDeck(cDeck.slice(1))
+    if (parseInt(drawnPlayerCard.value) > parseInt(drawnCpuCard.value)) {
+      setPlayerDeck(pDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+      setCpuDeck(cDeck.slice(1))
     }
 
-    else if (drawnPlayerCard.value < drawnCpuCard.value) {
+    else if (parseInt(drawnPlayerCard.value) < parseInt(drawnCpuCard.value)) {
       setCpuDeck(cDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
       setPlayerDeck(pDeck.slice(1))
     }
 
-    else {
-       war()
-     }
-
+    else if (parseInt(drawnPlayerCard.value) === parseInt(drawnCpuCard.value)){
+      war()
+    }
   }
 
   const war = () => {
-    console.log('WAR!')
+    const pDeck = playerDeck.slice()
+    const cDeck = cpuDeck.slice()
+    const cWarDeck = cpuWar.slice()
+    const pWarDeck = playerWar.slice()
+
+    const drawnPlayerCard = pDeck[0]
+    const drawnCpuCard = cDeck[0]
+
+    const pWar = pDeck.slice(1).slice(0,2)
+    const cWar = cDeck.slice(1).slice(0,2)
+
+    if (parseInt(pWar[pWar.length-1].value) > parseInt(cWar[cWar.length-1].value)) {
+      setPlayerDeck(pDeck.slice(1).slice(0,2).concat([drawnPlayerCard, drawnCpuCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
+      setCpuDeck(cDeck.slice(3, cDeck.length))
+      setCpuWar([])
+      setPlayerWar([])
+    }
+
+    else if (parseInt(pWar[pWar.length-1].value) < parseInt(cWar[cWar.length-1].value)) {
+      setCpuDeck(cDeck.slice(1).slice(0,2).concat([drawnPlayerCard, drawnCpuCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
+      setPlayerDeck(pDeck.slice(3, cDeck.length))
+      setCpuWar([])
+      setPlayerWar([])
+    }
+
+    else if (parseInt(pWar[pWar.length-1].value) === parseInt(cWar[cWar.length-1].value)) {
+      setCpuDeck(cDeck.slice(3, cDeck.length))
+      setPlayerDeck(pDeck.slice(3, pDeck.length))
+      setCpuWar([...cpuWar, ...cWar])
+      setPlayerWar([...pWar, ...cWar])
+      war()
+    } 
   }
 
   useEffect(() => {
