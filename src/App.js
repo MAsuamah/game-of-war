@@ -7,6 +7,23 @@ function App() {
   const [playerDeck, setPlayerDeck] = useState([])
   const [deckId, setDeckId] = useState('')
 
+  const getCardValues = (deck) => {
+    const newDeck = deck.map((card) => {
+      if(card.value === "JACK") {
+        return {...card, value: "11"}
+      } else if(card.value === "QUEEN") {
+        return {...card, value: "12"}
+      } else if(card.value === "KING") {
+        return {...card, value: "13"}
+      } else if(card.value === "ACE") {
+        return {...card, value: "14"}
+      } else {
+        return {...card}
+      }
+    })
+
+    return newDeck;
+  }
 
   useEffect(() => {
     fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
@@ -31,7 +48,8 @@ function App() {
     })
     .then(function(response) {
       const { cards } = response
-      setPlayerDeck(cards)
+      const playersCards = getCardValues(cards)
+      setPlayerDeck(playersCards)
     })
 
     fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
@@ -39,8 +57,9 @@ function App() {
       return response.json()
     })
     .then(function(response) {
-        const { cards } = response
-        setCpuDeck(cards)
+      const { cards } = response
+      const cpusCards = getCardValues(cards)
+      setCpuDeck(cpusCards)
     })
   }
 
@@ -59,7 +78,6 @@ function App() {
 
     setPlayerDeck(newPDeck)
     setCpuDeck(newCpuDeck)
-
   }
 
   useEffect(() => {
