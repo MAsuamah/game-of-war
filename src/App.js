@@ -102,15 +102,15 @@ function App() {
     const cWar = cDeck.slice(1).slice(0,2)
 
     if (parseInt(pWar[pWar.length-1].value) > parseInt(cWar[cWar.length-1].value)) {
-      setPlayerDeck(pDeck.slice(1).slice(0,2).concat([drawnPlayerCard, drawnCpuCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
+      setPlayerDeck(pDeck.slice(3, pDeck.length).concat([drawnPlayerCard, drawnCpuCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
       setCpuDeck(cDeck.slice(3, cDeck.length))
       setCpuWar([])
       setPlayerWar([])
     }
 
     else if (parseInt(pWar[pWar.length-1].value) < parseInt(cWar[cWar.length-1].value)) {
-      setCpuDeck(cDeck.slice(1).slice(0,2).concat([drawnPlayerCard, drawnCpuCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
-      setPlayerDeck(pDeck.slice(3, cDeck.length))
+      setCpuDeck(cDeck.slice(3, cDeck.length).concat([drawnPlayerCard, drawnCpuCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
+      setPlayerDeck(pDeck.slice(3, pDeck.length))
       setCpuWar([])
       setPlayerWar([])
     }
