@@ -14,6 +14,7 @@ function App() {
   
   const [deckId, setDeckId] = useState('')
 
+//Get full deck
   useEffect(() => {
     fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
     .then(function(response) {
@@ -28,6 +29,7 @@ function App() {
     });
   }, [])
 
+//Helper functions
   const getCardValues = (deck) => {
     const newDeck = deck.map((card) => {
       if(card.value === "JACK") {
@@ -42,17 +44,19 @@ function App() {
         return {...card}
       }
     })
+
     return newDeck;
   }
 
   const isEmpty = obj => {
     for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-            return false;
+      if(obj.hasOwnProperty(key))
+        return false;
     }
     return true;
   }
 
+//Game Logic
   const startGame = () => {
     fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
     .then(function(response) {
@@ -102,7 +106,7 @@ function App() {
     }
 
     else if (parseInt(drawnPlayerCard.value) === parseInt(drawnCpuCard.value)){
-        war(pDeck, cDeck)  
+      war(pDeck, cDeck)  
     }  
   }
 
@@ -136,12 +140,6 @@ function App() {
     } 
   }
 
-  useEffect(() => {
-    console.log(drawnPlCard)
-    console.log(drawnCpCard)
-
-  }, [drawnPlCard, drawnCpCard])
-
   return (
     <div>
       <div>
@@ -149,6 +147,7 @@ function App() {
         <button onClick={() => drawCards()}>Draw Cards</button>
       </div>
       <div>
+        <img alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
         {!isEmpty(drawnPlCard) && (
           <img alt="player's drawn card" src={drawnPlCard.image}></img>
         )} 
