@@ -9,8 +9,8 @@ function App() {
   const [cpuWar, setCpuWar] = useState([])
   const [playerWar, setPlayerWar] = useState([])
 
-  const [drawnPlCard, setDrawnPlCard] = useState(null)
-  const [drawnCpCard, setDrawnCpCard] = useState(null)
+  const [drawnPlCard, setDrawnPlCard] = useState({})
+  const [drawnCpCard, setDrawnCpCard] = useState({})
   
   const [deckId, setDeckId] = useState('')
 
@@ -45,9 +45,15 @@ function App() {
     return newDeck;
   }
 
-  const startGame = () => {
-    console.log(deckId)
+  const isEmpty = obj => {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+  }
 
+  const startGame = () => {
     fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
     .then(function(response) {
       return response.json()
@@ -76,7 +82,6 @@ function App() {
   }
 
   const drawCards = () => {
-
     const pDeck = playerDeck.slice()
     const cDeck = cpuDeck.slice()
 
@@ -86,57 +91,45 @@ function App() {
     setDrawnPlCard(drawnPlayerCard)
     setDrawnCpCard(drawnCpuCard)
 
-    console.log(drawnPlayerCard)
-    console.log(drawnCpuCard)
-
     if (parseInt(drawnPlayerCard.value) > parseInt(drawnCpuCard.value)) {
-      setPlayerDeck(pDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
-      setCpuDeck(cDeck.slice(1))
-      setDrawnPlCard(null)
-      setDrawnCpCard(null)
+      setPlayerDeck(playerDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+      setCpuDeck(cpuDeck.slice(1))
     }
 
     else if (parseInt(drawnPlayerCard.value) < parseInt(drawnCpuCard.value)) {
-      setCpuDeck(cDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
-      setPlayerDeck(pDeck.slice(1))
-      setDrawnPlCard(null)
-      setDrawnCpCard(null)
+      setCpuDeck(cpuDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+      setPlayerDeck(playerDeck.slice(1))
     }
 
     else if (parseInt(drawnPlayerCard.value) === parseInt(drawnCpuCard.value)){
-      war(pDeck, cDeck)
-    }
+        war(pDeck, cDeck)  
+    }  
   }
 
-  const war = (ppDeck, ccDeck) => {
-
+  const war = (pDeck, cDeck) => {
     const cWarDeck = cpuWar.slice()
     const pWarDeck = playerWar.slice()
 
-    const pWar = ppDeck.slice(1).slice(0,2)
-    const cWar = ccDeck.slice(1).slice(0,2)
+    const pWar = pDeck.slice(1).slice(0,2)
+    const cWar = cDeck.slice(1).slice(0,2)
 
     if (parseInt(pWar[pWar.length-1].value) > parseInt(cWar[cWar.length-1].value)) {
-      setPlayerDeck(ppDeck.slice(3, ppDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
-      setCpuDeck(ccDeck.slice(3, ccDeck.length))
+      setPlayerDeck(pDeck.slice(3, pDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
+      setCpuDeck(cDeck.slice(3, cDeck.length))
       setCpuWar([])
       setPlayerWar([])
-      setDrawnPlCard(null)
-      setDrawnCpCard(null)
     }
 
     else if (parseInt(pWar[pWar.length-1].value) < parseInt(cWar[cWar.length-1].value)) {
-      setCpuDeck(ccDeck.slice(3, ccDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
-      setPlayerDeck(ppDeck.slice(3, ppDeck.length))
+      setCpuDeck(cDeck.slice(3, cDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
+      setPlayerDeck(pDeck.slice(3, pDeck.length))
       setCpuWar([])
       setPlayerWar([])
-      setDrawnPlCard(null)
-      setDrawnCpCard(null)
     }
 
     else if (parseInt(pWar[pWar.length-1].value) === parseInt(cWar[cWar.length-1].value)) {
-      setCpuDeck(ccDeck.slice(3, ccDeck.length))
-      setPlayerDeck(ppDeck.slice(3, ppDeck.length))
+      setCpuDeck(cDeck.slice(3, cDeck.length))
+      setPlayerDeck(pDeck.slice(3, pDeck.length))
       setCpuWar([...cpuWar, ...cWar])
       setPlayerWar([...pWar, ...cWar])
       war()
@@ -144,16 +137,10 @@ function App() {
   }
 
   useEffect(() => {
-    console.log(playerDeck)
-    console.log(cpuDeck)
-  }, [playerDeck, cpuDeck])
+    console.log(drawnPlCard)
+    console.log(drawnCpCard)
 
-  
-  useEffect(() => {
-    console.log(playerDeck)
-    console.log(cpuDeck)
-  }, [playerDeck, cpuDeck])
-
+  }, [drawnPlCard, drawnCpCard])
 
   return (
     <div>
@@ -162,9 +149,12 @@ function App() {
         <button onClick={() => drawCards()}>Draw Cards</button>
       </div>
       <div>
-        {drawnPlCard && (
+        {!isEmpty(drawnPlCard) && (
           <img alt="player's drawn card" src={drawnPlCard.image}></img>
-        )}     
+        )} 
+        {!isEmpty(drawnCpCard) && (
+          <img alt="computer's drawn card" src={drawnCpCard.image}></img>
+        )}       
       </div>
     </div>
   );
