@@ -31,32 +31,7 @@ function App() {
       console.error('Error:', error);
     });
 
-    fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
-    .then(function(response) {
-      return response.json()
-    })
-    .then(function(response) {
-      const { cards } = response
-      const playersCards = getCardValues(cards)
-      setPlayerDeck(playersCards)
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-
-    fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
-    .then(function(response) {
-      return response.json()
-    })
-    .then(function(response) {
-      const { cards } = response
-      const cpusCards = getCardValues(cards)
-      setCpuDeck(cpusCards)
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-  }, [deckId])
+  }, [])
 
 //Helper functions
   const getCardValues = (deck) => {
@@ -87,6 +62,33 @@ function App() {
 
 //Game Logic
   const startGame = () => {
+
+    fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
+    .then(function(response) {
+      return response.json()
+    })
+    .then(function(response) {
+      const { cards } = response
+      const playersCards = getCardValues(cards)
+      setPlayerDeck(playersCards)
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+
+    fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
+    .then(function(response) {
+      return response.json()
+    })
+    .then(function(response) {
+      const { cards } = response
+      const cpusCards = getCardValues(cards)
+      setCpuDeck(cpusCards)
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+
     setStartGameBtn(false)
     setdrawBtn(true)
   }
@@ -142,31 +144,31 @@ function App() {
       setPlayerDeck(pDeck.slice(3, pDeck.length))
       setCpuWar([...cpuWar, ...cWar])
       setPlayerWar([...pWar, ...cWar])
-      war()
+      war(pDeck, cDeck)
     } 
   }
 
   return (
     <div>
-      <h1>War!</h1>
+      <h1 className="title">WAR</h1>
       <div className="flex-deck">
         <div className="players-deck">
-          <h2>Player's Deck</h2>
+          <h2 className="title">Player's Deck: {playerDeck.length}</h2>
           <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
           {!isEmpty(drawnPlCard) && (
             <img alt="player's drawn card" src={drawnPlCard.image}></img>
           )}      
         </div>
-        <div className="game-btn">
+        <div>
           {startGameBtn && (
-            <button onClick={() => startGame()}>Start Game</button>
+            <button className="game-btn" onClick={() => startGame()}>Start Game</button>
           )}
           {drawBtn && (
-          <button onClick={() => drawCards()}>Draw Cards</button>
+          <button className="game-btn"  onClick={() => drawCards()}>Draw Cards</button>
           )}
         </div>
         <div className="cpus-deck">
-        <h2>Computer's Deck</h2>
+        <h2 className="title" >Computer's Deck : {cpuDeck.length}</h2>
           <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
           {!isEmpty(drawnCpCard) && (
             <img alt="computer's drawn card" src={drawnCpCard.image}></img>
