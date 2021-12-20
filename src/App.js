@@ -142,15 +142,18 @@ function App() {
 
   return (
     <div>
-      <div>
+      <div className="game-btn">
         <button onClick={() => startGame()}>Start Game</button>
         <button onClick={() => drawCards()}>Draw Cards</button>
       </div>
-      <div>
-        <img alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
+      <div className="players-deck">
+        <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
         {!isEmpty(drawnPlCard) && (
           <img alt="player's drawn card" src={drawnPlCard.image}></img>
-        )} 
+        )}      
+      </div>
+      <div className="cpus-deck">
+        <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
         {!isEmpty(drawnCpCard) && (
           <img alt="computer's drawn card" src={drawnCpCard.image}></img>
         )}       
