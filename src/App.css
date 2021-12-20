@@ -40,3 +40,8 @@
 .back-card {
   border-radius: 10px;
 }
+
+.flex-deck {
+  display: flex;
+  justify-content: space-around;
+}
