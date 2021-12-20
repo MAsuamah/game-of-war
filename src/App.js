@@ -3,19 +3,19 @@ import './App.css';
 
 function App() {
 
+  const [startGameBtn, setStartGameBtn] = useState(true)
+  const [drawBtn, setdrawBtn] = useState(false)
+
+  const [deckId, setDeckId] = useState('')
+
   const [cpuDeck, setCpuDeck] = useState([])
   const [playerDeck, setPlayerDeck] = useState([])
-
-  const [cpuWar, setCpuWar] = useState([])
-  const [playerWar, setPlayerWar] = useState([])
 
   const [drawnPlCard, setDrawnPlCard] = useState({})
   const [drawnCpCard, setDrawnCpCard] = useState({})
 
-  const [startGameBtn, setStartGameBtn] = useState(true)
-  const [drawBtn, setdrawBtn] = useState(false)
-  
-  const [deckId, setDeckId] = useState('')
+  const [cpuWar, setCpuWar] = useState([])
+  const [playerWar, setPlayerWar] = useState([])
 
 //Get full deck
   useEffect(() => {
@@ -62,7 +62,6 @@ function App() {
 
 //Game Logic
   const startGame = () => {
-
     fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
     .then(function(response) {
       return response.json()
@@ -94,8 +93,12 @@ function App() {
   }
 
   const drawCards = () => {
-    const pDeck = playerDeck.slice()
-    const cDeck = cpuDeck.slice()
+    setdrawBtn(false)
+    setPlayerWar([])
+    setCpuWar([])
+
+    let pDeck = playerDeck.slice()
+    let cDeck = cpuDeck.slice()
 
     const drawnPlayerCard = pDeck[0]
     const drawnCpuCard = cDeck[0]
@@ -104,13 +107,19 @@ function App() {
     setDrawnCpCard(drawnCpuCard)
 
     if (parseInt(drawnPlayerCard.value) > parseInt(drawnCpuCard.value)) {
-      setPlayerDeck(playerDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
-      setCpuDeck(cpuDeck.slice(1))
+      setTimeout(() => {
+        setPlayerDeck(playerDeck => playerDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+        setCpuDeck(cpuDeck => cpuDeck.slice(1))
+        setdrawBtn(true)
+      }, 2000);  
     }
 
     else if (parseInt(drawnPlayerCard.value) < parseInt(drawnCpuCard.value)) {
-      setCpuDeck(cpuDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
-      setPlayerDeck(playerDeck.slice(1))
+      setTimeout(() => {
+        setCpuDeck(cpuDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+        setPlayerDeck(playerDeck.slice(1))
+        setdrawBtn(true)
+      }, 2000);  
     }
 
     else if (parseInt(drawnPlayerCard.value) === parseInt(drawnCpuCard.value)){
@@ -125,21 +134,21 @@ function App() {
     const pWar = pDeck.slice(1).slice(0,2)
     const cWar = cDeck.slice(1).slice(0,2)
 
+    setPlayerWar(pWar)
+    setCpuWar(pWar)
+    
     if (parseInt(pWar[pWar.length-1].value) > parseInt(cWar[cWar.length-1].value)) {
       setPlayerDeck(pDeck.slice(3, pDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
       setCpuDeck(cDeck.slice(3, cDeck.length))
-      setCpuWar([])
-      setPlayerWar([])
     }
 
     else if (parseInt(pWar[pWar.length-1].value) < parseInt(cWar[cWar.length-1].value)) {
       setCpuDeck(cDeck.slice(3, cDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
       setPlayerDeck(pDeck.slice(3, pDeck.length))
-      setCpuWar([])
-      setPlayerWar([])
     }
 
     else if (parseInt(pWar[pWar.length-1].value) === parseInt(cWar[cWar.length-1].value)) {
+      pDeck = 
       setCpuDeck(cDeck.slice(3, cDeck.length))
       setPlayerDeck(pDeck.slice(3, pDeck.length))
       setCpuWar([...cpuWar, ...cWar])
@@ -175,6 +184,24 @@ function App() {
           )}       
         </div>
       </div>
+      <div className="flex-deck">
+          {playerWar.length && (
+            <div className="pwar-deck"> 
+              <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
+              <img alt="player's drawn card" src={playerWar.image}></img>
+            </div>
+          )}
+      
+        
+        <div className="cwar-deck">
+        <h2 className="title" >Computer's Deck : {cpuDeck.length}</h2>
+          <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
+          {!isEmpty(drawnCpCard) && (
+            <img alt="computer's drawn card" src={drawnCpCard.image}></img>
+          )}       
+        </div>
+      </div>
+      
     </div>
   );
 }
