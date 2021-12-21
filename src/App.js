@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
-
   const [startGameBtn, setStartGameBtn] = useState(true)
   const [drawBtn, setdrawBtn] = useState(false)
-
-  const [deckId, setDeckId] = useState('')
 
   const [cpuDeck, setCpuDeck] = useState([])
   const [playerDeck, setPlayerDeck] = useState([])
@@ -18,23 +15,6 @@ function App() {
   const [playerWar, setPlayerWar] = useState([])
 
   const [rules, setRules] = useState(true)
-
-
-//Get full deck
-  useEffect(() => {
-    fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
-    .then(function(response) {
-      return response.json()
-    })
-    .then(function(response){
-      console.log(response)
-      setDeckId(response.deck_id)
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-
-  }, [])
 
 //Helper functions
   const getCardValues = (deck) => {
@@ -66,27 +46,40 @@ function App() {
 //Game Logic
   const startGame = () => {
     setRules(false)
-    fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
-    .then(function(response) {
-      return response.json()
-    })
-    .then(function(response) {
-      const { cards } = response
-      const playersCards = getCardValues(cards)
-      setPlayerDeck(playersCards)
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
 
-    fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
+    fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
     .then(function(response) {
       return response.json()
     })
-    .then(function(response) {
-      const { cards } = response
-      const cpusCards = getCardValues(cards)
-      setCpuDeck(cpusCards)
+    .then(function(response){
+      const deckId = response.deck_id
+
+      fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
+      .then(function(response) {
+        return response.json()
+      })
+      .then(function(response) {
+        const { cards } = response
+        const playersCards = getCardValues(cards)
+        setPlayerDeck(playersCards)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  
+      fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
+      .then(function(response) {
+        return response.json()
+      })
+      .then(function(response) {
+        const { cards } = response
+        const cpusCards = getCardValues(cards)
+        setCpuDeck(cpusCards)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  
     })
     .catch((error) => {
       console.error('Error:', error);
