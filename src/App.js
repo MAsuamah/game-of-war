@@ -198,7 +198,12 @@ function App() {
             <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
             <img alt="player's drawn card" src={playerWar[playerWar.length-1].image}></img>
           </div>
-        )}  
+        )}
+        {playerWar.length > 0 && (
+          <div className="war-txt"> 
+            <p>War Deck Amount: {playerWar.length} cards per deck.<br/> Round Winner gets all the war cards!</p>
+          </div>
+        )}   
         {cpuWar.length > 0 && (
           <div className="cwar-deck">
             <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
