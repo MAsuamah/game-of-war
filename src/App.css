@@ -19,5 +19,9 @@
   padding: 10px;
   border-radius: 10px;
   border-color: red;
+}
 
+.rules {
+  margin: 60px;
+  margin-top: 0;
 }

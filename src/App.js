@@ -17,6 +17,9 @@ function App() {
   const [cpuWar, setCpuWar] = useState([])
   const [playerWar, setPlayerWar] = useState([])
 
+  const [rules, setRules] = useState(true)
+
+
 //Get full deck
   useEffect(() => {
     fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
@@ -62,6 +65,7 @@ function App() {
 
 //Game Logic
   const startGame = () => {
+    setRules(false)
     fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=26`)
     .then(function(response) {
       return response.json()
@@ -108,16 +112,16 @@ function App() {
 
     if (parseInt(drawnPlayerCard.value) > parseInt(drawnCpuCard.value)) {
       setTimeout(() => {
-        setPlayerDeck(playerDeck => playerDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
-        setCpuDeck(cpuDeck => cpuDeck.slice(1))
+        setPlayerDeck(pDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+        setCpuDeck(cDeck.slice(1))
         setdrawBtn(true)
       }, 2000);  
     }
 
     else if (parseInt(drawnPlayerCard.value) < parseInt(drawnCpuCard.value)) {
       setTimeout(() => {
-        setCpuDeck(cpuDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
-        setPlayerDeck(playerDeck.slice(1))
+        setCpuDeck(cDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+        setPlayerDeck(pDeck.slice(1))
         setdrawBtn(true)
       }, 2000);  
     }
@@ -127,33 +131,48 @@ function App() {
     }  
   }
 
-  const war = (pDeck, cDeck) => {
+  const war = (pDeck, cDeck) => {  
     const cWarDeck = cpuWar.slice()
     const pWarDeck = playerWar.slice()
 
-    const pWar = pDeck.slice(1).slice(0,2)
-    const cWar = cDeck.slice(1).slice(0,2)
+    const pWar = pDeck.slice(1).slice(0, 2)
+    const cWar = cDeck.slice(1).slice(0, 2)
 
     setPlayerWar(pWar)
-    setCpuWar(pWar)
+    setCpuWar(cWar)
     
     if (parseInt(pWar[pWar.length-1].value) > parseInt(cWar[cWar.length-1].value)) {
-      setPlayerDeck(pDeck.slice(3, pDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
-      setCpuDeck(cDeck.slice(3, cDeck.length))
+      setTimeout(() => {
+        setPlayerDeck(
+          pDeck.slice(3, playerDeck.length)
+          .concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck])
+        )
+        setCpuDeck(cDeck.slice(3, cpuDeck.length))
+        setdrawBtn(true)
+      }, 2000);  
     }
 
     else if (parseInt(pWar[pWar.length-1].value) < parseInt(cWar[cWar.length-1].value)) {
-      setCpuDeck(cDeck.slice(3, cDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
-      setPlayerDeck(pDeck.slice(3, pDeck.length))
+      setTimeout(() => {
+        setCpuDeck(
+          cDeck.slice(3, cDeck.length)
+          .concat([drawnCpCard, drawnPlCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck])
+        )
+        setPlayerDeck(pDeck.slice(3, pDeck.length))
+        setdrawBtn(true)
+      }, 2000);
     }
 
     else if (parseInt(pWar[pWar.length-1].value) === parseInt(cWar[cWar.length-1].value)) {
-      pDeck = 
-      setCpuDeck(cDeck.slice(3, cDeck.length))
-      setPlayerDeck(pDeck.slice(3, pDeck.length))
+      const pNewDeck = pDeck.slice(3, pDeck.length)
+      const cNewDeck = cDeck.slice(3, cDeck.length)
+      setCpuDeck(cNewDeck)
+      setPlayerDeck(pNewDeck)
       setCpuWar([...cpuWar, ...cWar])
       setPlayerWar([...pWar, ...cWar])
-      war(pDeck, cDeck)
+      war(pNewDeck, cNewDeck)
+      setdrawBtn(true)
+
     } 
   }
 
@@ -185,23 +204,40 @@ function App() {
         </div>
       </div>
       <div className="flex-deck">
-          {playerWar.length && (
-            <div className="pwar-deck"> 
-              <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
-              <img alt="player's drawn card" src={playerWar.image}></img>
-            </div>
-          )}
-      
-        
-        <div className="cwar-deck">
-        <h2 className="title" >Computer's Deck : {cpuDeck.length}</h2>
-          <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
-          {!isEmpty(drawnCpCard) && (
-            <img alt="computer's drawn card" src={drawnCpCard.image}></img>
-          )}       
-        </div>
+        {playerWar.length > 0 && (
+          <div className="pwar-deck"> 
+            <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
+            <img alt="player's drawn card" src={playerWar[playerWar.length-1].image}></img>
+          </div>
+        )}  
+        {playerWar.length > 0 && (
+          <div className="cwar-deck">
+            <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
+            <img alt="computer's drawn card" src={cpuWar[cpuWar.length-1].image}></img>
+          </div>
+        )}
+        {rules && (
+          <div className="rules">
+            <p>
+              The goal is to be the first player to win all 52 cards 
+            </p>
+            <p>
+              <strong>THE DEAL</strong><br/>
+              The deck is divided evenly, with each player receiving 26 cards, dealt one at a time, face down. Anyone may deal first. Each player places their stack of cards face down, in front of them. <br/>
+            </p>
+            <p>
+              <strong>THE PLAY </strong><br/>
+              Each player turns up a card at the same time and the player with the higher card takes both cards and puts them, face down, on the bottom of his stack.
+              If the cards are the same rank, it is War. Each player turns up one card face down and one card face up. The player with the higher cards takes both piles (six cards). If the turned-up cards are again the same rank, each player places another card face down and turns another card face up. The player with the higher card takes all 10 cards, and so on. <br/>
+            </p>
+            <p>
+              <strong>HOW TO KEEP SCORE</strong><br/>
+              The game ends when one player has won all the cards.
+            </p>
+          </div>
+        )}
+
       </div>
-      
     </div>
   );
 }
