@@ -120,7 +120,9 @@ function App() {
     }
 
     else if (parseInt(drawnPlayerCard.value) === parseInt(drawnCpuCard.value)){
-      war(pDeck, cDeck)  
+      setTimeout(() => {
+        war(pDeck, cDeck)
+      }, 2000);
     }  
   }
 
@@ -133,39 +135,33 @@ function App() {
 
     setPlayerWar(pWar)
     setCpuWar(cWar)
-    
+
     if (parseInt(pWar[pWar.length-1].value) > parseInt(cWar[cWar.length-1].value)) {
       setTimeout(() => {
-        setPlayerDeck(
-          pDeck.slice(3, playerDeck.length)
-          .concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck])
-        )
+        setPlayerDeck(pDeck.slice(3, playerDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
         setCpuDeck(cDeck.slice(3, cpuDeck.length))
         setdrawBtn(true)
-      }, 2000);  
+      }, 2000);
     }
 
     else if (parseInt(pWar[pWar.length-1].value) < parseInt(cWar[cWar.length-1].value)) {
       setTimeout(() => {
-        setCpuDeck(
-          cDeck.slice(3, cDeck.length)
-          .concat([drawnCpCard, drawnPlCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck])
-        )
+        setCpuDeck(cDeck.slice(3, cDeck.length).concat([drawnCpCard, drawnPlCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
         setPlayerDeck(pDeck.slice(3, pDeck.length))
         setdrawBtn(true)
-      }, 2000);
+      }, 2000);  
     }
 
     else if (parseInt(pWar[pWar.length-1].value) === parseInt(cWar[cWar.length-1].value)) {
       const pNewDeck = pDeck.slice(3, pDeck.length)
       const cNewDeck = cDeck.slice(3, cDeck.length)
-      setCpuDeck(cNewDeck)
-      setPlayerDeck(pNewDeck)
-      setCpuWar([...cpuWar, ...cWar])
-      setPlayerWar([...pWar, ...cWar])
-      war(pNewDeck, cNewDeck)
-      setdrawBtn(true)
-
+      setTimeout(() => {
+        setCpuDeck(cNewDeck)
+        setPlayerDeck(pNewDeck)
+        setCpuWar([...cpuWar, ...cWar])
+        setPlayerWar([...pWar, ...cWar])
+        war(pNewDeck, cNewDeck)
+      }, 2000);  
     } 
   }
 
@@ -203,7 +199,7 @@ function App() {
             <img alt="player's drawn card" src={playerWar[playerWar.length-1].image}></img>
           </div>
         )}  
-        {playerWar.length > 0 && (
+        {cpuWar.length > 0 && (
           <div className="cwar-deck">
             <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
             <img alt="computer's drawn card" src={cpuWar[cpuWar.length-1].image}></img>
