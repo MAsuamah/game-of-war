@@ -14,6 +14,9 @@ function App() {
   const [cpuWar, setCpuWar] = useState([])
   const [playerWar, setPlayerWar] = useState([])
 
+  const [playerWin, setPlayerWin] = useState('')
+  const [cpuWin, setCpuWin] = useState('')
+
   const [rules, setRules] = useState(true)
 
 //Helper functions
@@ -107,7 +110,7 @@ function App() {
       setTimeout(() => {
         setPlayerDeck(pDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
         setCpuDeck(cDeck.slice(1))
-        setdrawBtn(true)
+        checkWinner()
       }, 2000);  
     }
 
@@ -115,7 +118,7 @@ function App() {
       setTimeout(() => {
         setCpuDeck(cDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
         setPlayerDeck(pDeck.slice(1))
-        setdrawBtn(true)
+        checkWinner()
       }, 2000);  
     }
 
@@ -140,7 +143,7 @@ function App() {
       setTimeout(() => {
         setPlayerDeck(pDeck.slice(3, playerDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
         setCpuDeck(cDeck.slice(3, cpuDeck.length))
-        setdrawBtn(true)
+        checkWinner()
       }, 2000);
     }
 
@@ -148,7 +151,7 @@ function App() {
       setTimeout(() => {
         setCpuDeck(cDeck.slice(3, cDeck.length).concat([drawnCpCard, drawnPlCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
         setPlayerDeck(pDeck.slice(3, pDeck.length))
-        setdrawBtn(true)
+        checkWinner()
       }, 2000);  
     }
 
@@ -163,6 +166,20 @@ function App() {
         war(pNewDeck, cNewDeck)
       }, 2000);  
     } 
+  }
+
+  const checkWinner = () => {
+    if(!playerDeck.length) {
+      setPlayerWin('Congratulations! You Won! Would you like to play again?')
+      setStartGameBtn(true)
+    }
+    else if (!cpuDeck.length){
+      setCpuWin('Sorry, You Lost... Would you like to play again?')
+      setStartGameBtn(true)
+    }
+    else {
+      setdrawBtn(true)
+    }
   }
 
   return (
@@ -201,9 +218,19 @@ function App() {
         )}
         {playerWar.length > 0 && (
           <div className="war-txt"> 
-            <p>War Deck Amount: {playerWar.length} cards per deck.<br/> Round Winner gets all the war cards!</p>
+            <p>War Deck Amount: {playerWar.length} cards per deck.<br/> Round Winner gets back all the war cards!</p>
           </div>
-        )}   
+        )}
+        {playerWin.length > 0 && (
+          <div className="p-won">
+            {playerWin}
+          </div>
+        )}
+        {cpuWin.length > 0 && (
+          <div className="p-won">
+            {cpuWin}
+          </div>
+        )}
         {cpuWar.length > 0 && (
           <div className="cwar-deck">
             <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
@@ -230,7 +257,6 @@ function App() {
             </p>
           </div>
         )}
-
       </div>
     </div>
   );
