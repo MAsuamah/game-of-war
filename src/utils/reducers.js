@@ -42,7 +42,16 @@ const reducer = (state, action) => {
       ...state,
       playerWar: action.playerWar
     };
-
+    case 'SET_P_WIN':
+      return {
+      ...state,
+      playerWin: action.playerWin
+    };
+    case 'SET_C_WIN':
+      return {
+      ...state,
+      cpuWin: action.cpuWin
+    }
     default:
       return state;
   }

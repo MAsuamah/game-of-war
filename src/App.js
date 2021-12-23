@@ -4,10 +4,18 @@ import './App.css';
 
 function App() {
   const [state, dispatch] = useGameContext();
-  const {startGameBtn, drawBtn, playerDeck, cpuDeck, drawnPlCard, drawnCpCard, cpuWar, playerWar} = state;
-
-  const [playerWin, setPlayerWin] = useState('')
-  const [cpuWin, setCpuWin] = useState('')
+  const {
+    startGameBtn, 
+    drawBtn, 
+    playerDeck, 
+    cpuDeck, 
+    drawnPlCard, 
+    drawnCpCard, 
+    cpuWar, 
+    playerWar,
+    playerWin,
+    cpuWin
+  } = state;
 
   const [rules, setRules] = useState(true)
 
@@ -40,6 +48,8 @@ function App() {
 
 //Game Logic
   const startGame = () => {
+    dispatch({type: 'SET_P_WIN', playerWin: ''})
+    dispatch({type: 'SET_C_WIN', playerWin: ''})
     setRules(false)
 
     fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
@@ -218,11 +228,11 @@ function App() {
 
   const checkWinner = () => {
     if(!playerDeck.length) {
-      setPlayerWin('Congratulations! You Won! Would you like to play again?')
+      dispatch({type: 'SET_P_WIN', playerWin: 'Congratulations! You Won! Would you like to play again?'})
       dispatch({type: 'SET_START_BUTTON'})
     }
     else if (!cpuDeck.length){
-      setCpuWin('Sorry, You Lost... Would you like to play again?')
+      dispatch({type: 'SET_C_WIN', cpuWin: 'Sorry, You Lost... Would you like to play again?'})
       dispatch({type: 'SET_START_BUTTON'})
     }
     else {
