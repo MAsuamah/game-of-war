@@ -7,6 +7,11 @@ const reducer = (state, action) => {
         ...state,
         startGameBtn: !state.startGameBtn
       };
+    case 'SET_DRAW_BUTTON':
+      return {
+        ...state,
+        drawBtn: !state.drawBtn
+      };
 
     
 

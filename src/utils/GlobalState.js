@@ -7,6 +7,7 @@ const { Provider } = GameContext
 const GameProvider = ({value=[], ...props}) => {
   const [state, dispatch] = useGameReducer({
     startGameBtn: true,
+    drawBtn: false,
   })
 
   console.log(state)

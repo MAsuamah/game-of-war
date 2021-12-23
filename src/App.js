@@ -4,10 +4,7 @@ import './App.css';
 
 function App() {
   const [state, dispatch] = useGameContext()
-
-/*   const [startGameBtn, setStartGameBtn] = useState(true) */
-  const [drawBtn, setdrawBtn] = useState(false)
-
+  
   const [cpuDeck, setCpuDeck] = useState([])
   const [playerDeck, setPlayerDeck] = useState([])
 
@@ -93,11 +90,11 @@ function App() {
 
     /* setStartGameBtn(false) */
     dispatch({type: 'SET_START_BUTTON'})
-    setdrawBtn(true)
+    dispatch({type: 'SET_DRAW_BUTTON'})
   }
 
   const drawCards = () => {
-    setdrawBtn(false)
+    dispatch({type: 'SET_DRAW_BUTTON'})
     setPlayerWar([])
     setCpuWar([])
 
@@ -182,7 +179,7 @@ function App() {
       dispatch({type: 'SET_START_BUTTON'})
     }
     else {
-      setdrawBtn(true)
+      dispatch({type: 'SET_DRAW_BUTTON'})
     }
   }
 
@@ -201,7 +198,7 @@ function App() {
           {state.startGameBtn && (
             <button className="game-btn" onClick={() => startGame()}>Start Game</button>
           )}
-          {drawBtn && (
+          {state.drawBtn && (
           <button className="game-btn"  onClick={() => drawCards()}>Draw Cards</button>
           )}
         </div>
