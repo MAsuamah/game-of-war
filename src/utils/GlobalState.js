@@ -9,6 +9,7 @@ const GameProvider = ({value=[], ...props}) => {
     startGameBtn: true,
     drawBtn: false,
     playerDeck: [],
+    cpuDeck: []
   })
 
   console.log(state)

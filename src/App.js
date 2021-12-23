@@ -5,8 +5,6 @@ import './App.css';
 function App() {
   const [state, dispatch] = useGameContext()
 
-  const [cpuDeck, setCpuDeck] = useState([])
-
   const [drawnPlCard, setDrawnPlCard] = useState({})
   const [drawnCpCard, setDrawnCpCard] = useState({})
 
@@ -63,7 +61,6 @@ function App() {
       .then(function(response) {
         const { cards } = response
         const playersCards = getCardValues(cards)
-        /* setPlayerDeck(playersCards) */
         dispatch({type: 'SET_PLAYER_DECK', playerDeck: playersCards})
       })
       .catch((error) => {
@@ -77,7 +74,7 @@ function App() {
       .then(function(response) {
         const { cards } = response
         const cpusCards = getCardValues(cards)
-        setCpuDeck(cpusCards)
+        dispatch({type: 'SET_CPU_DECK', cpuDeck: cpusCards})
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -88,7 +85,6 @@ function App() {
       console.error('Error:', error);
     });
 
-    /* setStartGameBtn(false) */
     dispatch({type: 'SET_START_BUTTON'})
     dispatch({type: 'SET_DRAW_BUTTON'})
   }
@@ -99,7 +95,7 @@ function App() {
     setCpuWar([])
 
     let pDeck = state.playerDeck.slice()
-    let cDeck = cpuDeck.slice()
+    let cDeck = state.cpuDeck.slice()
 
     const drawnPlayerCard = pDeck[0]
     const drawnCpuCard = cDeck[0]
@@ -115,14 +111,24 @@ function App() {
             playerDeck: pDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard])
           }
         )
-        setCpuDeck(cDeck.slice(1))
+        dispatch(
+          {
+            type: 'SET_CPU_DECK', 
+            cpuDeck: cDeck.slice(1)
+          }
+        )
         checkWinner()
       }, 2000);  
     }
 
     else if (parseInt(drawnPlayerCard.value) < parseInt(drawnCpuCard.value)) {
       setTimeout(() => {
-        setCpuDeck(cDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+        dispatch(
+          {
+            type: 'SET_CPU_DECK', 
+            cpuDeck: cDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard])
+          }
+        )
         dispatch(
           {
             type: 'SET_PLAYER_DECK', 
@@ -159,20 +165,35 @@ function App() {
               .concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck])
           }
         )
-       setCpuDeck(cDeck.slice(3, cpuDeck.length))
+          
+        dispatch(
+          {
+            type: 'SET_CPU_DECK', 
+            cpuDeck: cDeck.slice(3, state.cpuDeck.length)
+          }
+        )
+          
         checkWinner()
       }, 2000);
     }
 
     else if (parseInt(pWar[pWar.length-1].value) < parseInt(cWar[cWar.length-1].value)) {
       setTimeout(() => {
-        setCpuDeck(cDeck.slice(3, cDeck.length).concat([drawnCpCard, drawnPlCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
+        dispatch(
+          {
+            type: 'SET_CPU_DECK', 
+            cpuDeck: cDeck.slice(3, cDeck.length)
+              .concat([drawnCpCard, drawnPlCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck])
+          }
+        )
+
         dispatch(
           {
             type: 'SET_PLAYER_DECK', 
-            playerDeck: (pDeck.slice(3, pDeck.length))
+            playerDeck: pDeck.slice(3, pDeck.length)
           }
         )
+
         checkWinner()
       }, 2000);  
     }
@@ -181,7 +202,12 @@ function App() {
       const pNewDeck = pDeck.slice(3, pDeck.length)
       const cNewDeck = cDeck.slice(3, cDeck.length)
       setTimeout(() => {
-        setCpuDeck(cNewDeck)
+        dispatch(
+          {
+            type: 'SET_CPU_DECK', 
+            cpuDeck: cNewDeck
+          }
+        )
         dispatch(
           {
             type: 'SET_PLAYER_DECK', 
@@ -200,7 +226,7 @@ function App() {
       setPlayerWin('Congratulations! You Won! Would you like to play again?')
       dispatch({type: 'SET_START_BUTTON'})
     }
-    else if (!cpuDeck.length){
+    else if (!state.cpuDeck.length){
       setCpuWin('Sorry, You Lost... Would you like to play again?')
       dispatch({type: 'SET_START_BUTTON'})
     }
@@ -229,7 +255,7 @@ function App() {
           )}
         </div>
         <div className="cpus-deck">
-        <h2 className="title" >Computer's Deck : {cpuDeck.length}</h2>
+        <h2 className="title" >Computer's Deck : {state.cpuDeck.length}</h2>
           <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
           {!isEmpty(drawnCpCard) && (
             <img alt="computer's drawn card" src={drawnCpCard.image}></img>

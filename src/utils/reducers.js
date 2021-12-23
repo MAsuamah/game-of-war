@@ -17,6 +17,11 @@ const reducer = (state, action) => {
         ...state,
         playerDeck: action.playerDeck
       };
+    case 'SET_CPU_DECK':
+      return {
+        ...state,
+        cpuDeck: action.cpuDeck
+      };
 
     
 
