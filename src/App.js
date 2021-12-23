@@ -4,10 +4,7 @@ import './App.css';
 
 function App() {
   const [state, dispatch] = useGameContext();
-  const {startGameBtn, drawBtn, playerDeck, cpuDeck, drawnPlCard, drawnCpCard} = state;
-
-  const [cpuWar, setCpuWar] = useState([])
-  const [playerWar, setPlayerWar] = useState([])
+  const {startGameBtn, drawBtn, playerDeck, cpuDeck, drawnPlCard, drawnCpCard, cpuWar, playerWar} = state;
 
   const [playerWin, setPlayerWin] = useState('')
   const [cpuWin, setCpuWin] = useState('')
@@ -89,8 +86,8 @@ function App() {
 
   const drawCards = () => {
     dispatch({type: 'SET_DRAW_BUTTON'})
-    setPlayerWar([])
-    setCpuWar([])
+    dispatch({type: 'SET_P_WAR', playerWar: []})
+    dispatch({type: 'SET_C_WAR', cpuWar: []})
 
     let pDeck = playerDeck.slice()
     let cDeck = cpuDeck.slice()
@@ -151,8 +148,8 @@ function App() {
     const pWar = pDeck.slice(1).slice(0, 2)
     const cWar = cDeck.slice(1).slice(0, 2)
 
-    setPlayerWar(pWar)
-    setCpuWar(cWar)
+    dispatch({type: 'SET_P_WAR', playerWar: pWar})
+    dispatch({type: 'SET_C_WAR', cpuWar: cWar})
 
     if (parseInt(pWar[pWar.length-1].value) > parseInt(cWar[cWar.length-1].value)) {
       setTimeout(() => {
@@ -212,8 +209,8 @@ function App() {
             playerDeck: pNewDeck
           }
         )
-        setCpuWar([...cpuWar, ...cWar])
-        setPlayerWar([...pWar, ...cWar])
+        dispatch({type: 'SET_C_WAR', cpuWar: [...cpuWar, ...cWar]})
+        dispatch({type: 'SET_P_WAR', playerWar: [...cpuWar, ...cWar]})
         war(pNewDeck, cNewDeck)
       }, 2000);  
     } 

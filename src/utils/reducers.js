@@ -32,8 +32,16 @@ const reducer = (state, action) => {
         ...state,
         drawnCpCard: action.drawnCpCard
       };
-
-    
+    case 'SET_C_WAR':
+      return {
+      ...state,
+      cpuWar: action.cpuWar
+    };
+    case 'SET_P_WAR':
+      return {
+      ...state,
+      playerWar: action.playerWar
+    };
 
     default:
       return state;

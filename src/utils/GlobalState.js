@@ -11,7 +11,9 @@ const GameProvider = ({value=[], ...props}) => {
     playerDeck: [],
     cpuDeck: [],
     drawnPlCard: {},
-    drawnCpCard: {}
+    drawnCpCard: {},
+    cpuWar: [],  
+    playerWar: [],  
   })
 
   console.log(state)
