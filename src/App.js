@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { useGameContext } from './utils/GlobalState';
 import './App.css';
 
 function App() {
-  const [startGameBtn, setStartGameBtn] = useState(true)
+  const [state, dispatch] = useGameContext()
+
+/*   const [startGameBtn, setStartGameBtn] = useState(true) */
   const [drawBtn, setdrawBtn] = useState(false)
 
   const [cpuDeck, setCpuDeck] = useState([])
@@ -88,7 +91,8 @@ function App() {
       console.error('Error:', error);
     });
 
-    setStartGameBtn(false)
+    /* setStartGameBtn(false) */
+    dispatch({type: 'SET_START_BUTTON'})
     setdrawBtn(true)
   }
 
@@ -171,11 +175,11 @@ function App() {
   const checkWinner = () => {
     if(!playerDeck.length) {
       setPlayerWin('Congratulations! You Won! Would you like to play again?')
-      setStartGameBtn(true)
+      dispatch({type: 'SET_START_BUTTON'})
     }
     else if (!cpuDeck.length){
       setCpuWin('Sorry, You Lost... Would you like to play again?')
-      setStartGameBtn(true)
+      dispatch({type: 'SET_START_BUTTON'})
     }
     else {
       setdrawBtn(true)
@@ -194,7 +198,7 @@ function App() {
           )}      
         </div>
         <div>
-          {startGameBtn && (
+          {state.startGameBtn && (
             <button className="game-btn" onClick={() => startGame()}>Start Game</button>
           )}
           {drawBtn && (
