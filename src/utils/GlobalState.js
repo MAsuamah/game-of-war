@@ -14,9 +14,9 @@ const GameProvider = ({value=[], ...props}) => {
     drawnCpCard: {},
     cpuWar: [],  
     playerWar: [], 
-    playerWin: '' ,
-    cpuWin: '' ,
-
+    playerWin: '',
+    cpuWin: '',
+    rules: true
   })
 
   console.log(state)

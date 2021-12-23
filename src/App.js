@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useGameContext } from './utils/GlobalState';
 import './App.css';
 
 function App() {
+
   const [state, dispatch] = useGameContext();
   const {
     startGameBtn, 
@@ -14,10 +15,10 @@ function App() {
     cpuWar, 
     playerWar,
     playerWin,
-    cpuWin
+    cpuWin,
+    rules
   } = state;
 
-  const [rules, setRules] = useState(true)
 
 //Helper functions
   const getCardValues = (deck) => {
@@ -49,8 +50,8 @@ function App() {
 //Game Logic
   const startGame = () => {
     dispatch({type: 'SET_P_WIN', playerWin: ''})
-    dispatch({type: 'SET_C_WIN', playerWin: ''})
-    setRules(false)
+    dispatch({type: 'SET_C_WIN', cpuWin: ''})
+    dispatch({type: 'SET_RULES'})
 
     fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
     .then(function(response) {

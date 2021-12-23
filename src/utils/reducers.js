@@ -52,6 +52,11 @@ const reducer = (state, action) => {
       ...state,
       cpuWin: action.cpuWin
     }
+    case 'SET_RULES':
+      return {
+      ...state,
+      rules: false
+    }
     default:
       return state;
   }
