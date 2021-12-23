@@ -1,4 +1,4 @@
- import { useReducer } from "react"
+import { useReducer } from "react"
 
 const reducer = (state, action) => {
   switch(action.type) {
@@ -11,6 +11,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         drawBtn: !state.drawBtn
+      };
+    case 'SET_PLAYER_DECK':
+      return {
+        ...state,
+        playerDeck: action.playerDeck
       };
 
     

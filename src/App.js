@@ -4,9 +4,8 @@ import './App.css';
 
 function App() {
   const [state, dispatch] = useGameContext()
-  
+
   const [cpuDeck, setCpuDeck] = useState([])
-  const [playerDeck, setPlayerDeck] = useState([])
 
   const [drawnPlCard, setDrawnPlCard] = useState({})
   const [drawnCpCard, setDrawnCpCard] = useState({})
@@ -64,7 +63,8 @@ function App() {
       .then(function(response) {
         const { cards } = response
         const playersCards = getCardValues(cards)
-        setPlayerDeck(playersCards)
+        /* setPlayerDeck(playersCards) */
+        dispatch({type: 'SET_PLAYER_DECK', playerDeck: playersCards})
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -98,7 +98,7 @@ function App() {
     setPlayerWar([])
     setCpuWar([])
 
-    let pDeck = playerDeck.slice()
+    let pDeck = state.playerDeck.slice()
     let cDeck = cpuDeck.slice()
 
     const drawnPlayerCard = pDeck[0]
@@ -109,7 +109,12 @@ function App() {
 
     if (parseInt(drawnPlayerCard.value) > parseInt(drawnCpuCard.value)) {
       setTimeout(() => {
-        setPlayerDeck(pDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
+        dispatch(
+          {
+            type: 'SET_PLAYER_DECK', 
+            playerDeck: pDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard])
+          }
+        )
         setCpuDeck(cDeck.slice(1))
         checkWinner()
       }, 2000);  
@@ -118,7 +123,12 @@ function App() {
     else if (parseInt(drawnPlayerCard.value) < parseInt(drawnCpuCard.value)) {
       setTimeout(() => {
         setCpuDeck(cDeck.slice(1).concat([drawnPlayerCard, drawnCpuCard]))
-        setPlayerDeck(pDeck.slice(1))
+        dispatch(
+          {
+            type: 'SET_PLAYER_DECK', 
+            playerDeck: pDeck.slice(1)
+          }
+        )
         checkWinner()
       }, 2000);  
     }
@@ -142,8 +152,14 @@ function App() {
 
     if (parseInt(pWar[pWar.length-1].value) > parseInt(cWar[cWar.length-1].value)) {
       setTimeout(() => {
-        setPlayerDeck(pDeck.slice(3, playerDeck.length).concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck]))
-        setCpuDeck(cDeck.slice(3, cpuDeck.length))
+        dispatch(
+          {
+            type: 'SET_PLAYER_DECK', 
+            playerDeck: pDeck.slice(3, state.playerDeck.length)
+              .concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck])
+          }
+        )
+       setCpuDeck(cDeck.slice(3, cpuDeck.length))
         checkWinner()
       }, 2000);
     }
@@ -151,7 +167,12 @@ function App() {
     else if (parseInt(pWar[pWar.length-1].value) < parseInt(cWar[cWar.length-1].value)) {
       setTimeout(() => {
         setCpuDeck(cDeck.slice(3, cDeck.length).concat([drawnCpCard, drawnPlCard, ...pWar, ...cWar, ...pWarDeck, ...cWarDeck]))
-        setPlayerDeck(pDeck.slice(3, pDeck.length))
+        dispatch(
+          {
+            type: 'SET_PLAYER_DECK', 
+            playerDeck: (pDeck.slice(3, pDeck.length))
+          }
+        )
         checkWinner()
       }, 2000);  
     }
@@ -161,7 +182,12 @@ function App() {
       const cNewDeck = cDeck.slice(3, cDeck.length)
       setTimeout(() => {
         setCpuDeck(cNewDeck)
-        setPlayerDeck(pNewDeck)
+        dispatch(
+          {
+            type: 'SET_PLAYER_DECK', 
+            playerDeck: pNewDeck
+          }
+        )
         setCpuWar([...cpuWar, ...cWar])
         setPlayerWar([...pWar, ...cWar])
         war(pNewDeck, cNewDeck)
@@ -170,7 +196,7 @@ function App() {
   }
 
   const checkWinner = () => {
-    if(!playerDeck.length) {
+    if(!state.playerDeck.length) {
       setPlayerWin('Congratulations! You Won! Would you like to play again?')
       dispatch({type: 'SET_START_BUTTON'})
     }
@@ -188,7 +214,7 @@ function App() {
       <h1 className="title">WAR</h1>
       <div className="flex-deck">
         <div className="players-deck">
-          <h2 className="title">Player's Deck: {playerDeck.length}</h2>
+          <h2 className="title">Player's Deck: {state.playerDeck.length}</h2>
           <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
           {!isEmpty(drawnPlCard) && (
             <img alt="player's drawn card" src={drawnPlCard.image}></img>

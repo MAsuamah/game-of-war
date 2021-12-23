@@ -8,6 +8,7 @@ const GameProvider = ({value=[], ...props}) => {
   const [state, dispatch] = useGameReducer({
     startGameBtn: true,
     drawBtn: false,
+    playerDeck: [],
   })
 
   console.log(state)
