@@ -3,10 +3,8 @@ import { useGameContext } from './utils/GlobalState';
 import './App.css';
 
 function App() {
-  const [state, dispatch] = useGameContext()
-
-  const [drawnPlCard, setDrawnPlCard] = useState({})
-  const [drawnCpCard, setDrawnCpCard] = useState({})
+  const [state, dispatch] = useGameContext();
+  const {startGameBtn, drawBtn, playerDeck, cpuDeck, drawnPlCard, drawnCpCard} = state;
 
   const [cpuWar, setCpuWar] = useState([])
   const [playerWar, setPlayerWar] = useState([])
@@ -94,14 +92,14 @@ function App() {
     setPlayerWar([])
     setCpuWar([])
 
-    let pDeck = state.playerDeck.slice()
-    let cDeck = state.cpuDeck.slice()
+    let pDeck = playerDeck.slice()
+    let cDeck = cpuDeck.slice()
 
     const drawnPlayerCard = pDeck[0]
     const drawnCpuCard = cDeck[0]
 
-    setDrawnPlCard(drawnPlayerCard)
-    setDrawnCpCard(drawnCpuCard)
+    dispatch({type: 'SET_DRAWN_PL_CARD', drawnPlCard: drawnPlayerCard})
+    dispatch({type: 'SET_DRAWN_CP_CARD', drawnCpCard: drawnCpuCard})
 
     if (parseInt(drawnPlayerCard.value) > parseInt(drawnCpuCard.value)) {
       setTimeout(() => {
@@ -161,7 +159,7 @@ function App() {
         dispatch(
           {
             type: 'SET_PLAYER_DECK', 
-            playerDeck: pDeck.slice(3, state.playerDeck.length)
+            playerDeck: pDeck.slice(3, playerDeck.length)
               .concat([drawnPlCard, drawnCpCard, ...pWar, ...cWar, ...cWarDeck, ...pWarDeck])
           }
         )
@@ -169,7 +167,7 @@ function App() {
         dispatch(
           {
             type: 'SET_CPU_DECK', 
-            cpuDeck: cDeck.slice(3, state.cpuDeck.length)
+            cpuDeck: cDeck.slice(3, cpuDeck.length)
           }
         )
           
@@ -222,11 +220,11 @@ function App() {
   }
 
   const checkWinner = () => {
-    if(!state.playerDeck.length) {
+    if(!playerDeck.length) {
       setPlayerWin('Congratulations! You Won! Would you like to play again?')
       dispatch({type: 'SET_START_BUTTON'})
     }
-    else if (!state.cpuDeck.length){
+    else if (!cpuDeck.length){
       setCpuWin('Sorry, You Lost... Would you like to play again?')
       dispatch({type: 'SET_START_BUTTON'})
     }
@@ -240,22 +238,22 @@ function App() {
       <h1 className="title">WAR</h1>
       <div className="flex-deck">
         <div className="players-deck">
-          <h2 className="title">Player's Deck: {state.playerDeck.length}</h2>
+          <h2 className="title">Player's Deck: {playerDeck.length}</h2>
           <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
           {!isEmpty(drawnPlCard) && (
             <img alt="player's drawn card" src={drawnPlCard.image}></img>
           )}      
         </div>
         <div>
-          {state.startGameBtn && (
+          {startGameBtn && (
             <button className="game-btn" onClick={() => startGame()}>Start Game</button>
           )}
-          {state.drawBtn && (
+          {drawBtn && (
           <button className="game-btn"  onClick={() => drawCards()}>Draw Cards</button>
           )}
         </div>
         <div className="cpus-deck">
-        <h2 className="title" >Computer's Deck : {state.cpuDeck.length}</h2>
+        <h2 className="title" >Computer's Deck : {cpuDeck.length}</h2>
           <img className="back-card" alt="back of card" height='314' width='266' src={require(`./card-back-red.png`).default}></img>
           {!isEmpty(drawnCpCard) && (
             <img alt="computer's drawn card" src={drawnCpCard.image}></img>

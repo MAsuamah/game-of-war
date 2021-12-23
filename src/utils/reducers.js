@@ -22,6 +22,16 @@ const reducer = (state, action) => {
         ...state,
         cpuDeck: action.cpuDeck
       };
+    case 'SET_DRAWN_PL_CARD':
+      return {
+        ...state,
+        drawnPlCard: action.drawnPlCard
+      };
+    case 'SET_DRAWN_CP_CARD':
+        return {
+        ...state,
+        drawnCpCard: action.drawnCpCard
+      };
 
     
 
