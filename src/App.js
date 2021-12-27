@@ -221,7 +221,7 @@ function App() {
           }
         )
         dispatch({type: 'SET_C_WAR', cpuWar: [...cpuWar, ...cWar]})
-        dispatch({type: 'SET_P_WAR', playerWar: [...cpuWar, ...cWar]})
+        dispatch({type: 'SET_P_WAR', playerWar: [...playerWar, ...pWar]})
         war(pNewDeck, cNewDeck)
       }, 2000);  
     } 

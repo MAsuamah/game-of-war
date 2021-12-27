@@ -1,6 +1,6 @@
 import { useReducer } from "react"
 
-const reducer = (state, action) => {
+export const reducer = (state, action) => {
   switch(action.type) {
     case 'SET_START_BUTTON':
       return {
